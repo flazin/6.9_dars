@@ -1,38 +1,41 @@
-import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-import ReactGA from "react-ga4";
+import React, { useEffect } from "react";
+import { Switch, Route, useLocation } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import "./assets/scss/style.scss";
+import "./App.css";
+import * as routes from "./routePaths";
+import Homepage from "./components/Homepage/Homepage";
+import ResumePage from "./components/ResumePage/ResumePage";
 
-import Homepage from "./pages/homepage";
-import About from "./pages/about";
-import Projects from "./pages/projects";
-import Articles from "./pages/articles";
-import ReadArticle from "./pages/readArticle";
-import Contact from "./pages/contact";
-import Notfound from "./pages/404";
-
-import { TRACKING_ID } from "./data/tracking";
-import "./app.css";
-
-function App() {
-	useEffect(() => {
-		if (TRACKING_ID !== "") {
-			ReactGA.initialize(TRACKING_ID);
-		}
-	}, []);
-
-	return (
-		<div className="App">
-			<Routes>
-				<Route path="/" element={<Homepage />} />
-				<Route path="/about" element={<About />} />
-				<Route path="/projects" element={<Projects />} />
-				<Route path="/articles" element={<Articles />} />
-				<Route path="/article/:slug" element={<ReadArticle />} />
-				<Route path="/contact" element={<Contact />} />
-				<Route path="*" element={<Notfound />} />
-			</Routes>
-		</div>
-	);
+function App(props) {
+  const { pathname, hash } = useLocation();
+  console.log(hash);
+  console.log(props);
+  useEffect(() => {
+    if (!hash || pathname === "/resume") {
+      document.body.scrollTop = 0;
+    } else {
+      setTimeout(() => {
+        const id = hash.replace("#", "");
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            offset: "-120",
+            block: "start"
+          });
+        }
+      }, 0);
+    }
+  }, [pathname, hash]);
+  return (
+    <div className="App" id="home">
+      <Switch>
+        <Route exact path={routes.homepage} component={Homepage} />
+        <Route exact path={routes.resume} component={ResumePage} />
+      </Switch>
+    </div>
+  );
 }
 
 export default App;
